@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { ThemeProvider } from 'styled-components';
+
+import store from './store/store';
+
+import ThemeToggler from './components/Toggler';
+import Button from './components/Button';
+
 import './App.css';
 
 const App = () => {
-  return (
+  const [theme, setTheme] = useState(store.getState().theme);
+
+  store.subscribe(() => setTheme(store.getState().theme));
+
+  function handleThemeToggled(dark: boolean) {
+    console.log("handleThemeToggled");
+    if(dark) {
+      console.log("dark");
+      store.dispatch({ type: 'dark' });
+    }
+    else {
+      console.log("light");
+      store.dispatch({ type: 'light' });
+    }
+  }
+
+  return (<ThemeProvider theme={theme}>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ThemeToggler onToggle={handleThemeToggled} checked={store.getState().name === 'dark'} />
+      <Button onClick={() => handleThemeToggled(store.getState().name === 'light')}>Click me</Button>
     </div>
-  );
+  </ThemeProvider>);
 }
 
 export default App;
